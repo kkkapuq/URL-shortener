@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>URL Shortener</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .container {
+            width: 50%;
+            margin: 0 auto;
+        }
+        .input-group {
+            display: flex;
+            justify-content: center;
+        }
+        .input-group input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            font-size: 1em;
+        }
+        .input-group button {
+            padding: 10px 20px;
+            font-size: 1em;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        #shortened-url {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>URL shortener</h1>
+    <div class="input-group">
+        <input type="text" id="url-input" maxlength="1000" placeholder="Enter your URL here...">
+        <button onclick="shortenUrl()">Let's shorten!</button>
+    </div>
+    <div id="shortened-url"></div>
+</div>
+
+<script>
+    async function shortenUrl() {
+        const urlInput = document.getElementById('url-input').value;
+        if (urlInput.trim() === '') {
+            alert('Please enter a URL.');
+            return;
+        }
+
+        const response = await fetch('http://localhost:8080/api/shorten', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ url: urlInput })
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            document.getElementById('shortened-url').innerText = result.shortenedUrl;
+        } else {
+            alert('Failed to shorten the URL. Please try again.');
+        }
+    }
+</script>
+</body>
+</html>
